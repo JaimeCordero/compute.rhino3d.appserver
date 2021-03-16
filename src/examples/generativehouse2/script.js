@@ -10,10 +10,54 @@ loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
 
 // initialise 'data' object that will be used by compute()
 const definition = 'generativehouse.gh';
-const data = {
+/*const data = {
   definition: 'generativehouse.gh',
   inputs: getInputs()
-}
+}*/
+
+const slope = document.getElementById( 'RH_IN:slope' )
+slope.addEventListener( 'mouseup', onSliderChange, false )
+slope.addEventListener( 'touchend', onSliderChange, false )
+const height = document.getElementById( 'RH_IN:height' )
+height.addEventListener( 'mouseup', onSliderChange, false )
+height.addEventListener( 'touchend', onSliderChange, false )
+const houseDepth = document.getElementById( 'RH_IN:houseDepth' )
+houseDepth.addEventListener( 'mouseup', onSliderChange, false )
+houseDepth.addEventListener( 'touchend', onSliderChange, false )
+const houseWidth = document.getElementById( 'RH_IN:houseWidth' )
+houseWidth.addEventListener( 'mouseup', onSliderChange, false )
+houseWidth.addEventListener( 'touchend', onSliderChange, false )
+const count = document.getElementById( 'RH_IN:count' )
+count.addEventListener( 'mouseup', onSliderChange, false )
+count.addEventListener( 'touchend', onSliderChange, false )
+const generator = document.getElementById( 'RH_IN:generator' )
+generator.addEventListener( 'mouseup', onSliderChange, false )
+generator.addEventListener( 'touchend', onSliderChange, false )
+const location = document.getElementById( 'RH_IN:location' )
+location.addEventListener( 'mouseup', onSliderChange, false )
+location.addEventListener( 'touchend', onSliderChange, false )
+const windowCount = document.getElementById( 'RH_IN:windowCount' )
+windowCount.addEventListener( 'mouseup', onSliderChange, false )
+windowCount.addEventListener( 'touchend', onSliderChange, false )
+const sillHeight = document.getElementById( 'RH_IN:sillHeight' )
+sillHeight.addEventListener( 'mouseup', onSliderChange, false )
+sillHeight.addEventListener( 'touchend', onSliderChange, false )
+const windowHeight = document.getElementById( 'RH_IN:windowHeight' )
+windowHeight.addEventListener( 'mouseup', onSliderChange, false )
+windowHeight.addEventListener( 'touchend', onSliderChange, false )
+const windowWidth = document.getElementById( 'RH_IN:windowWidth' )
+windowWidth.addEventListener( 'mouseup', onSliderChange, false )
+windowWidth.addEventListener( 'touchend', onSliderChange, false )
+const poolLarge = document.getElementById( 'RH_IN:poolLarge' )
+poolLarge.addEventListener( 'mouseup', onSliderChange, false )
+poolLarge.addEventListener( 'touchend', onSliderChange, false )
+const poolWidth = document.getElementById( 'RH_IN:poolWidth' )
+poolWidth.addEventListener( 'mouseup', onSliderChange, false )
+poolWidth.addEventListener( 'touchend', onSliderChange, false )
+
+
+const showRoof = document.querySelector('input[id="RH_IN:showRoof"]');
+showRoof.addEventListener( 'change', onSliderChange, false )
 
 let points = []
 
@@ -24,7 +68,7 @@ rhino3dm().then(async m => {
     rhino = m
 
     init()
-    rndPts()
+    initialPts()
     compute()
 })
 
@@ -38,7 +82,7 @@ downloadButton.onclick = download
 /**
  * Gets <input> elements from html and sets handlers
  * (html is generated from the grasshopper definition)
- */
+ 
 function getInputs() {
   const inputs = {}
   for (const input of document.getElementsByTagName('input')) {
@@ -60,16 +104,17 @@ function getInputs() {
         break
     }
   }
-  return inputs
-}
 
-function rndPts() {
-  // generate random points
+
+  return inputs
+}*/
+
+function initialPts() {
 
   const startPts = [
-    { x: 8, y: 13, z: 0 },
-    { x: 15, y: 30, z: 0 },
-    { x: 17, y: 17, z: 0 },
+    { x: 0, y: 0, z: 0 },
+    { x: 8, y: 20, z: 0 },
+    { x: 9, y: 7, z: 0 },
 ]
 const cntPts = startPts.length
 
@@ -85,8 +130,8 @@ const cntPts = startPts.length
     points.push(pt)
 
     //viz in three
-    const icoGeo = new THREE.IcosahedronGeometry(1)
-    const icoMat = new THREE.MeshNormalMaterial(2)
+    const icoGeo = new THREE.IcosahedronGeometry(0.5)
+    const icoMat = new THREE.MeshNormalMaterial()
     const ico = new THREE.Mesh( icoGeo, icoMat )
     ico.name = 'ico'
     ico.position.set( x, y, z)
@@ -131,12 +176,25 @@ function onChange() {
  * Call appserver
  */
  async function compute () {
+
   const data = {
     definition: definition,
     inputs: {
-      //'dimension': dimension_slider.valueAsNumber,
-     // 'height': height_slider.valueAsNumber,
-      //'RH_IN:Fillet': height_slider.valueAsNumber,
+      'RH_IN:slope': slope.valueAsNumber,
+      'RH_IN:height': height.valueAsNumber,
+      'RH_IN:houseDepth': houseDepth.valueAsNumber,
+      'RH_IN:count': count.valueAsNumber,
+      'RH_IN:generator': generator.valueAsNumber,
+      'RH_IN:location': location.valueAsNumber,
+      'RH_IN:windowCount': windowCount.valueAsNumber,
+      'RH_IN:sillHeight': sillHeight.valueAsNumber,
+      'RH_IN:windowHeight': windowHeight.valueAsNumber,
+      'RH_IN:windowWidth': windowWidth.valueAsNumber,
+      'RH_IN:poolLarge': poolLarge.valueAsNumber,
+      'RH_IN:poolWidth': poolWidth.valueAsNumber,
+
+      'RH_IN:showRoof': showRoof.checked,
+
       'points': points
     }
   }
@@ -206,10 +264,22 @@ function onChange() {
     return
   }
 
+  // hack (https://github.com/mcneel/rhino3dm/issues/353)
+  const sphereAttrs = new rhino.ObjectAttributes()
+  sphereAttrs.mode = rhino.ObjectMode.Hidden
+  doc.objects().addSphere(new rhino.Sphere([0,0,0], 0.001), sphereAttrs)
+
   // load rhino doc into three.js scene
   const buffer = new Uint8Array(doc.toByteArray()).buffer
   loader.parse( buffer, function ( object ) 
   {
+            // debug 
+        /*
+        object.traverse(child => {
+          if (child.material !== undefined)
+            child.material = new THREE.MeshNormalMaterial()
+        }, false)
+        */
 
       // clear objects from scene
       scene.traverse(child => {
@@ -218,29 +288,15 @@ function onChange() {
         }
       })
 
-      ///////////////////////////////////////////////////////////////////////
-      
-      // color crvs
-      object.traverse(child => {
-        if (child.isLine) {
-          if (child.userData.attributes.geometry.userStringCount > 0) {
-            //console.log(child.userData.attributes.geometry.userStrings[0][1])
-            const col = child.userData.attributes.geometry.userStrings[0][1]
-            const threeColor = new THREE.Color( "rgb(" + col + ")")
-            const mat = new THREE.LineBasicMaterial({color:threeColor})
-            child.material = mat
-          }
-        }
-      })
-
-      ///////////////////////////////////////////////////////////////////////
-      // add object graph from rhino model to three.js scene
+            // add object graph from rhino model to three.js scene
       scene.add( object )
 
       // hide spinner and enable download button
       showSpinner(false)
       downloadButton.disabled = false
 
+      /* zoom to extents*/
+      //  zoomCameraToSelection(camera, controls, scene.children)
   })
 }
 
@@ -267,7 +323,7 @@ return null
  function onSliderChange () {
   showSpinner(true)
   // get slider values
-  let inputs = {}
+  /*let inputs = {}
   for (const input of document.getElementsByTagName('input')) {
     switch (input.type) {
     case 'number':
@@ -281,74 +337,67 @@ return null
       break
     }
   }
-  
-  data.inputs = inputs
+    
+  data.inputs = inputs*/
 
   compute()
 }
 
-
 /**
- * Shows or hides the loading spinner
+ * The animation loop!
  */
- function showSpinner(enable) {
-  if (enable)
-    document.getElementById('loader').style.display = 'block'
-  else
-    document.getElementById('loader').style.display = 'none'
+ function animate() {
+  requestAnimationFrame( animate )
+  controls.update()
+  renderer.render(scene, camera)
 }
 
-// BOILERPLATE //
+// more globals
+let scene, camera, renderer, controls
 
-var scene, camera, renderer, controls
-
-function init () {
+/**
+ * Sets up the scene, camera, renderer, lights and controls and starts the animation
+ */
+function init() {
 
   // Rhino models are z-up, so set this as the default
   THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
 
+  // create a scene and a camera
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0xdaedfa)
-  scene.fog = new THREE.Fog( 0xffffff, 40, 100 )
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 10000 )
-  camera.position.set(1, -1, 30)
-    // create the renderer and add it to the html
-  renderer = new THREE.WebGLRenderer({antialias: true})
+  scene.background = new THREE.Color(0xf7fbfd)
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
+  camera.position.set(-10, -10, 15) // like perspective view
+
+  // very light grey for background, like rhino
+  //scene.background = new THREE.Color('whitesmoke')
+
+  // create the renderer and add it to the html
+  renderer = new THREE.WebGLRenderer({ antialias: true })
   renderer.setPixelRatio( window.devicePixelRatio )
-  renderer.setSize( window.innerWidth, window.innerHeight )
+  renderer.setSize(window.innerWidth, window.innerHeight)
   document.body.appendChild(renderer.domElement)
- // add some controls to orbit the camera
-  controls = new OrbitControls( camera, renderer.domElement  )
-  controls.target.set(30, 39, -5);
+
+  // add some controls to orbit the camera
+  controls = new OrbitControls(camera, renderer.domElement)
+  controls.target.set(10,10,-5);
   controls.update();
 
   // add a directional light
-  scene.add( new THREE.AmbientLight( 0xf1e3c9, 2 ) )
-    const light = new THREE.DirectionalLight( 0xf1e3c9, 3 )
-    light.position.set( 200, 800, 300 )
-    light.position.multiplyScalar( 5000 )
-    light.castShadow = true;
-    light.shadow.mapSize.width = 1024;
-    light.shadow.mapSize.height = 1024;
-    const d = 500;
-    light.shadow.camera.left = - d;
-    light.shadow.camera.right = d;
-    light.shadow.camera.top = d;
-    light.shadow.camera.bottom = - d;
-    light.shadow.camera.far = 2000;
-    scene.add( light );
+  const directionalLight = new THREE.DirectionalLight( 0xffffff )
+  directionalLight.intensity = 2
+  directionalLight.position.set(10,-10,5)
+  scene.add( directionalLight )
 
-// handle changes in the window size
+  const ambientLight = new THREE.AmbientLight()
+  scene.add( ambientLight )
+
+  // handle changes in the window size
   window.addEventListener( 'resize', onWindowResize, false )
 
   animate()
 }
 
-var animate = function () {
-  requestAnimationFrame( animate )
-  renderer.render( scene, camera )
-}
-  
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
@@ -373,8 +422,18 @@ function onWindowResize() {
 }
 
 /**
- * Helper function that behaves like rhino's "zoom to selection", but for three.js!
+ * Shows or hides the loading spinner
  */
+ function showSpinner(enable) {
+  if (enable)
+    document.getElementById('loader').style.display = 'block'
+  else
+    document.getElementById('loader').style.display = 'none'
+}
+
+/**
+ * Helper function that behaves like rhino's "zoom to selection", but for three.js!
+ 
  function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
   
   const box = new THREE.Box3();
@@ -405,5 +464,4 @@ function onWindowResize() {
   camera.position.copy( controls.target ).sub(direction);
   
   controls.update();
-  
-}
+}*/

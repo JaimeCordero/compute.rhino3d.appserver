@@ -24,7 +24,7 @@ rhino3dm().then(async m => {
     rhino = m
 
     init()
-    rndPts()
+    initialPts()
     compute()
 })
 
@@ -63,13 +63,12 @@ function getInputs() {
   return inputs
 }
 
-function rndPts() {
-  // generate random points
+/*function initialPts() {
 
   const startPts = [
-    { x: 8, y: 13, z: 0 },
-    { x: 15, y: 30, z: 0 },
-    { x: 17, y: 17, z: 0 },
+    { x: 0, y: 0, z: 0 },
+    { x: 8, y: 20, z: 0 },
+    { x: 9, y: 7, z: 0 },
 ]
 const cntPts = startPts.length
 
@@ -85,8 +84,8 @@ const cntPts = startPts.length
     points.push(pt)
 
     //viz in three
-    const icoGeo = new THREE.IcosahedronGeometry(1)
-    const icoMat = new THREE.MeshNormalMaterial(2)
+    const icoGeo = new THREE.IcosahedronGeometry(0.5)
+    const icoMat = new THREE.MeshNormalMaterial()
     const ico = new THREE.Mesh( icoGeo, icoMat )
     ico.name = 'ico'
     ico.position.set( x, y, z)
@@ -125,53 +124,7 @@ function onChange() {
 
   controls.enabled = false
 
-}
-
-// more globals
-let scene, camera, renderer, controls
-
-/**
- * Sets up the scene, camera, renderer, lights and controls and starts the animation
- */
-function init() {
-
-    // Rhino models are z-up, so set this as the default
-    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
-
-    // create a scene and a camera
-    scene = new THREE.Scene()
-    scene.background = new THREE.Color(0xf7fbfd)
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    camera.position.set(-10, -10, 15) // like perspective view
-
-    // very light grey for background, like rhino
-    //scene.background = new THREE.Color('whitesmoke')
-
-    // create the renderer and add it to the html
-    renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio( window.devicePixelRatio )
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    document.body.appendChild(renderer.domElement)
-
-    // add some controls to orbit the camera
-    controls = new OrbitControls(camera, renderer.domElement)
-    controls.target.set(10,10,-5);
-    controls.update();
-
-    // add a directional light
-    const directionalLight = new THREE.DirectionalLight( 0xffffff )
-    directionalLight.intensity = 2
-    directionalLight.position.set(10,-10,5)
-    scene.add( directionalLight )
-
-    const ambientLight = new THREE.AmbientLight()
-    scene.add( ambientLight )
-
-    // handle changes in the window size
-    window.addEventListener( 'resize', onWindowResize, false )
-
-    animate()
-}
+}*/
 
 /**
  * Call appserver
@@ -275,8 +228,8 @@ function collectResults(responseJson) {
         showSpinner(false)
         downloadButton.disabled = false
 
-        /* zoom to extents
-        zoomCameraToSelection(camera, controls, scene.children)*/
+        /* zoom to extents*/
+        //zoomCameraToSelection(camera, controls, scene.children)
     })
 }
 
@@ -332,6 +285,52 @@ function animate() {
   renderer.render(scene, camera)
 }
 
+// more globals
+let scene, camera, renderer, controls
+
+/**
+ * Sets up the scene, camera, renderer, lights and controls and starts the animation
+ */
+function init() {
+
+    // Rhino models are z-up, so set this as the default
+    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
+
+    // create a scene and a camera
+    scene = new THREE.Scene()
+    scene.background = new THREE.Color(0xf7fbfd)
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
+    camera.position.set(-10, -10, 15) // like perspective view
+
+    // very light grey for background, like rhino
+    //scene.background = new THREE.Color('whitesmoke')
+
+    // create the renderer and add it to the html
+    renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio( window.devicePixelRatio )
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+
+    // add some controls to orbit the camera
+    controls = new OrbitControls(camera, renderer.domElement)
+    controls.target.set(10,10,-5);
+    controls.update();
+
+    // add a directional light
+    const directionalLight = new THREE.DirectionalLight( 0xffffff )
+    directionalLight.intensity = 2
+    directionalLight.position.set(10,-10,5)
+    scene.add( directionalLight )
+
+    const ambientLight = new THREE.AmbientLight()
+    scene.add( ambientLight )
+
+    // handle changes in the window size
+    window.addEventListener( 'resize', onWindowResize, false )
+
+    animate()
+}
+
 /**
  * Helper function for window resizes (resets the camera pov and renderer size)
   */
@@ -370,7 +369,7 @@ function showSpinner(enable) {
 
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
- */
+ 
  function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
   
   const box = new THREE.Box3();
@@ -401,4 +400,4 @@ function showSpinner(enable) {
   camera.position.copy( controls.target ).sub(direction);
   
   controls.update();
-}
+}*/
