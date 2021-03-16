@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.126.0/build/three.module.js'
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/loaders/3DMLoader.js'
+import { TransformControls } from 'https://cdn.jsdelivr.net/npm/three@0.126.0/examples/jsm/controls/TransformControls.js'
 import rhino3dm from 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/rhino3dm.module.js'
 
 // set up loader for converting the results to threejs
@@ -8,24 +9,22 @@ const loader = new Rhino3dmLoader()
 loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@0.15.0-beta/' )
 
 // initialise 'data' object that will be used by compute()
+const definition = 'generativehouse.gh';
 const data = {
   definition: 'generativehouse.gh',
   inputs: getInputs()
 }
 
-// let points = []
+let points = []
 
 // globals
 let rhino, doc
-let cameraRig, activeCamera, activeHelper;
-let cameraPerspective, cameraOrtho;
-let cameraPerspectiveHelper, cameraOrthoHelper
 
 rhino3dm().then(async m => {
     rhino = m
 
     init()
-    //rndPts()
+    rndPts()
     compute()
 })
 
@@ -64,12 +63,13 @@ function getInputs() {
   return inputs
 }
 
-/* function rndPts() {
+function rndPts() {
   // generate random points
 
   const startPts = [
-    { x: 6, y: 9, z: 0 },
-    { x: 7, y: 15, z: 0 },
+    { x: 8, y: 13, z: 0 },
+    { x: 15, y: 30, z: 0 },
+    { x: 17, y: 17, z: 0 },
 ]
 const cntPts = startPts.length
 
@@ -85,8 +85,8 @@ const cntPts = startPts.length
     points.push(pt)
 
     //viz in three
-    const icoGeo = new THREE.IcosahedronGeometry(25)
-    const icoMat = new THREE.MeshNormalMaterial()
+    const icoGeo = new THREE.IcosahedronGeometry(1)
+    const icoMat = new THREE.MeshNormalMaterial(2)
     const ico = new THREE.Mesh( icoGeo, icoMat )
     ico.name = 'ico'
     ico.position.set( x, y, z)
@@ -125,7 +125,7 @@ function onChange() {
 
   controls.enabled = false
 
-}*/
+}
 
 // more globals
 let scene, camera, renderer, controls
@@ -176,25 +176,34 @@ function init() {
 /**
  * Call appserver
  */
-async function compute() {
-  // construct url for GET /solve/definition.gh?name=value(&...)
-  const url = new URL('/solve/' + data.definition, window.location.origin)
-  Object.keys(data.inputs).forEach(key => url.searchParams.append(key, data.inputs[key]))
-  console.log(url.toString())
+ async function compute () {
+  const data = {
+    definition: definition,
+    inputs: {
+      'points': points
+    }
+  }
+
+  showSpinner(true)
+
+  console.log(data.inputs)
+
+  const request = {
+    'method':'POST',
+    'body': JSON.stringify(data),
+    'headers': {'Content-Type': 'application/json'}
+  }
 
   try {
-    const response = await fetch(url)
-  
-    if(!response.ok) {
-      // TODO: check for errors in response json
+    const response = await fetch('/solve', request)
+
+    if(!response.ok)
       throw new Error(response.statusText)
-    }
 
     const responseJson = await response.json()
-
     collectResults(responseJson)
 
-  } catch(error) {
+  } catch(error){
     console.error(error)
   }
 }
