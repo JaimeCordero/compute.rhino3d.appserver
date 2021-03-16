@@ -127,52 +127,6 @@ function onChange() {
 
 }
 
-// more globals
-let scene, camera, renderer, controls
-
-/**
- * Sets up the scene, camera, renderer, lights and controls and starts the animation
- */
-function init() {
-
-    // Rhino models are z-up, so set this as the default
-    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
-
-    // create a scene and a camera
-    scene = new THREE.Scene()
-    scene.background = new THREE.Color(0xf7fbfd)
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    camera.position.set(-10, -10, 15) // like perspective view
-
-    // very light grey for background, like rhino
-    //scene.background = new THREE.Color('whitesmoke')
-
-    // create the renderer and add it to the html
-    renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio( window.devicePixelRatio )
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    document.body.appendChild(renderer.domElement)
-
-    // add some controls to orbit the camera
-    controls = new OrbitControls(camera, renderer.domElement)
-    controls.target.set(10,10,-5);
-    controls.update();
-
-    // add a directional light
-    const directionalLight = new THREE.DirectionalLight( 0xffffff )
-    directionalLight.intensity = 2
-    directionalLight.position.set(10,-10,5)
-    scene.add( directionalLight )
-
-    const ambientLight = new THREE.AmbientLight()
-    scene.add( ambientLight )
-
-    // handle changes in the window size
-    window.addEventListener( 'resize', onWindowResize, false )
-
-    animate()
-}
-
 /**
  * Call appserver
  */
@@ -321,6 +275,52 @@ function onSliderChange () {
   data.inputs = inputs
 
   compute()
+}
+
+// more globals
+let scene, camera, renderer, controls
+
+/**
+ * Sets up the scene, camera, renderer, lights and controls and starts the animation
+ */
+function init() {
+
+    // Rhino models are z-up, so set this as the default
+    THREE.Object3D.DefaultUp = new THREE.Vector3( 0, 0, 1 );
+
+    // create a scene and a camera
+    scene = new THREE.Scene()
+    scene.background = new THREE.Color(0xf7fbfd)
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
+    camera.position.set(-10, -10, 15) // like perspective view
+
+    // very light grey for background, like rhino
+    //scene.background = new THREE.Color('whitesmoke')
+
+    // create the renderer and add it to the html
+    renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio( window.devicePixelRatio )
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+
+    // add some controls to orbit the camera
+    controls = new OrbitControls(camera, renderer.domElement)
+    controls.target.set(10,10,-5);
+    controls.update();
+
+    // add a directional light
+    const directionalLight = new THREE.DirectionalLight( 0xffffff )
+    directionalLight.intensity = 2
+    directionalLight.position.set(10,-10,5)
+    scene.add( directionalLight )
+
+    const ambientLight = new THREE.AmbientLight()
+    scene.add( ambientLight )
+
+    // handle changes in the window size
+    window.addEventListener( 'resize', onWindowResize, false )
+
+    animate()
 }
 
 /**
