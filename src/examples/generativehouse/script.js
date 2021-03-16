@@ -367,3 +367,38 @@ function showSpinner(enable) {
   else
     document.getElementById('loader').style.display = 'none'
 }
+
+/**
+ * Helper function that behaves like rhino's "zoom to selection", but for three.js!
+ */
+ function zoomCameraToSelection( camera, controls, selection, fitOffset = 1.2 ) {
+  
+  const box = new THREE.Box3();
+  
+  for( const object of selection ) {
+    if (object.isLight) continue
+    box.expandByObject( object );
+  }
+  
+  const size = box.getSize( new THREE.Vector3() );
+  const center = box.getCenter( new THREE.Vector3() );
+  
+  const maxSize = Math.max( size.x, size.y, size.z );
+  const fitHeightDistance = maxSize / ( 2 * Math.atan( Math.PI * camera.fov / 360 ) );
+  const fitWidthDistance = fitHeightDistance / camera.aspect;
+  const distance = fitOffset * Math.max( fitHeightDistance, fitWidthDistance );
+  
+  const direction = controls.target.clone()
+    .sub( camera.position )
+    .normalize()
+    .multiplyScalar( distance );
+  controls.maxDistance = distance * 10;
+  controls.target.copy( center );
+  
+  camera.near = distance / 100;
+  camera.far = distance * 100;
+  camera.updateProjectionMatrix();
+  camera.position.copy( controls.target ).sub(direction);
+  
+  controls.update();
+}
