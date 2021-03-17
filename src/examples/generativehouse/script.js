@@ -265,11 +265,6 @@ function onChange() {
     return
   }
 
-  // hack (https://github.com/mcneel/rhino3dm/issues/353)
-  const sphereAttrs = new rhino.ObjectAttributes()
-  sphereAttrs.mode = rhino.ObjectMode.Hidden
-  doc.objects().addSphere(new rhino.Sphere([0,0,0], 0.001), sphereAttrs)
-
   // load rhino doc into three.js scene
   const buffer = new Uint8Array(doc.toByteArray()).buffer
   loader.parse( buffer, function ( object ) 
@@ -415,7 +410,7 @@ function onWindowResize() {
     const blob = new Blob([bytes], {type: "application/octect-stream"})
 
     // use "hidden link" trick to get the browser to download the blob
-    const filename = data.definition.replace(/\.gh$/, '') + '.3dm'
+    const filename = definition.replace(/\.gh$/, '') + '.3dm'
     const link = document.createElement('a')
     link.href = window.URL.createObjectURL(blob)
     link.download = filename
