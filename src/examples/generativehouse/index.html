@@ -36,7 +36,7 @@
     h3 {
       margin: 10;
       font-family: 'Courier New', Courier, monospace;
-      font-size: 15px;
+      font-size: 12px;
       font-style: normal;
       color: black
     }
@@ -70,7 +70,7 @@
       z-index: 1;
       width: 250px;
       height: 100vw;
-      background-color: rgb(167, 167, 167);
+      background-color: rgb(230, 230, 230);
     }
 
     #overlay div {
@@ -82,7 +82,7 @@
       border-color: black;
       border-width: 1px;
       border-style: solid;
-      background-color: rgba(153, 153, 153, 0.2);
+      background-color: rgba(185, 185, 185, 0.2);
     }
 
     .split {
@@ -104,7 +104,7 @@
 
     #downloadButton {
       position: relative;
-      background-color: #80b3b9;
+      background-color: rgb(115, 156, 196, 0.5);
       border: none;
       color: white;
       padding: 10px 20px;
@@ -113,8 +113,7 @@
       font-size: 15px;
       top: 50%;
       left: 20%;
-      transition-duration: 0.4s;
-      }
+    }
 
     #downloadButton:hover {
       background-color: rgb(115, 156, 196);
@@ -160,65 +159,79 @@
 
         <div class="sliders">
           <div>
-            <h3>Roof</h3>
-          </div>
-          <div>
-            <label for="RH_IN:slope">Roof slope</label>
-            <input type="range" id="RH_IN:slope" min="1" max="40" value="20.0" step="0.5">
-          </div>
-          <div>
-            <label for="RH_IN:show-roof">Hide/Show Roof</label>
-            <input type="checkbox" id="RH_IN:show-roof">
+            <h3>1. Set up your house and pool location</h3>
           </div>
         </div>
 
         <div class="sliders">
           <div>
-            <h3>House exterior</h3>
+            <h3>2. Design the exterior</h3>
+          </div>
+          <div>
+            <h4>House</h4>
           </div>
           <div>
             <label for="RH_IN:height">Inner height</label>
             <input type="range" id="RH_IN:height" min="2.7" max="4.0" value="2.7" step="0.1">
           </div>
           <div>
-            <label for="RH_IN:house-depth">House depth</label>
-            <input type="range" id="RH_IN:house-depth" min="5.0" max="20.0" value="10.0" step="0.1">
+            <label for="RH_IN:houseDepth">House depth</label>
+            <input type="range" id="RH_IN:houseDepth" min="5.0" max="20.0" value="10.0" step="0.1">
           </div>
           <div>
-            <label for="RH_IN:house-width">House width</label>
-            <input type="range" id="RH_IN:house-width" min="5.0" max="20.0" value="10.0" step="0.1">
+            <label for="RH_IN:houseWidth">House width</label>
+            <input type="range" id="RH_IN:houseWidth" min="5.0" max="20.0" value="10.0" step="0.1">
+          </div>
+          <div>
+            <label for="RH_IN:slope">Roof slope</label>
+            <input type="range" id="RH_IN:slope" min="1" max="40" value="20.0" step="0.5">
+          </div>
+          <div>
+            <h4>Swimming pool</h4>
+          </div>
+          <div>
+            <label for="RH_IN:poolLarge">Large</label>
+            <input type="range" id="RH_IN:poolLarge" min="3.0" max="15.0" value="5.0" step="0.1">
+          </div>
+          <div>
+            <label for="RH_IN:poolWidth">Width</label>
+            <input type="range" id="RH_IN:poolWidth" min="3.0" max="15.0" value="10.0" step="0.1">
           </div>
         </div>
 
         <div class="sliders">
           <div>
-            <h3>House openings</h3>
+            <h3>3. Define your house openings</h3>
           </div>
           <div>
             <label for="RH_IN:location">Entrance location</label>
             <input type="range" id="RH_IN:location" min="0" max="3" value="0" step="1">
           </div>
           <div>
-            <label for="RH_IN:window-count">Window count</label>
-            <input type="range" id="RH_IN:window-count" min="2" max="5" value="3" step="1">
+            <label for="RH_IN:windowCount">Window count</label>
+            <input type="range" id="RH_IN:windowCount" min="2" max="5" value="3" step="1">
           </div>
           <div>
-            <label for="RH_IN:sill-height">Sill height</label>
-            <input type="range" id="RH_IN:sill-height" min="0.0" max="1.0" value="0.1" step="0.1">
+            <label for="RH_IN:sillHeight">Sill height</label>
+            <input type="range" id="RH_IN:sillHeight" min="0.0" max="1.0" value="0.1" step="0.1">
           </div>
           <div>
-            <label for="RH_IN:window-height">Window height</label>
-            <input type="range" id="RH_IN:window-height" min="0.0" max="3.0" value="2.1" step="0.1">
+            <label for="RH_IN:windowHeight">Window height</label>
+            <input type="range" id="RH_IN:windowHeight" min="0.0" max="3.0" value="2.1" step="0.1">
           </div>
           <div>
-            <label for="RH_IN:window-width">Window width</label>
-            <input type="range" id="RH_IN:window-width" min="0.0" max="3.0" value="1.5" step="0.1">
+            <label for="RH_IN:windowWidth">Window width</label>
+            <input type="range" id="RH_IN:windowWidth" min="0.0" max="3.0" value="1.5" step="0.1">
           </div>
         </div>
 
         <div class="sliders">
           <div>
-            <h3>House Interior</h3>
+            <h3>4. Design your house interior</h3>
+          </div>
+          <div>
+            <label for="RH_IN:showRoof">Hide/Show Roof</label>
+            <input type="checkbox" id="RH_IN:showRoof">
           </div>
           <div>
             <label for="RH_IN:count">Number of rooms</label>
@@ -232,19 +245,8 @@
 
         <div class="sliders">
           <div>
-            <h3>Swimming pool</h3>
+            <h3>5. Download your model and build it!</h3>
           </div>
-          <div>
-            <label for="RH_IN:pool-large">Large</label>
-            <input type="range" id="RH_IN:pool-large" min="3.0" max="15.0" value="5.0" step="0.1">
-          </div>
-          <div>
-            <label for="RH_IN:pool-width">Width</label>
-            <input type="range" id="RH_IN:pool-width" min="3.0" max="15.0" value="10.0" step="0.1">
-          </div>
-        </div>
-
-        <div class="sliders">
           <div><button id="downloadButton" disabled>Download</button></div>
         </div>
 
